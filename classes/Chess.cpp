@@ -84,10 +84,8 @@ void Chess::FENtoBoard(const std::string& fen) {
         } 
 
         else{ // this is where we put the pieces on the board
-            std::cout << "Placing piece:" << c << " at file="<< file << " and rank=" << rank << std::endl;
 
             int playerNumber = std::isupper(static_cast<unsigned char>(c)) ? 0 : 1;
-            std::cout << "Player Number: " << playerNumber << std::endl;
             ChessPiece whichPiece;
             switch (std::tolower(static_cast<unsigned char>(c))) {
                 case 'p' : whichPiece = Pawn; break;
@@ -114,40 +112,6 @@ void Chess::FENtoBoard(const std::string& fen) {
 
     }
 
-
-    // for(int i = 0; i < fen.length(); ++i) {
-    //     int x = i % 8;
-    //     int y = i / 8;
-    //     char c = fen[i];
-    //     std::cout << fen[i];
-        
-    //     if (c >= '1' && c <= '8') {
-    //         int emptySquares = c - '0';
-    //         for (int j = 0; j < emptySquares; ++j) {
-    //             _grid->getSquare(x + j, y)->setBit(nullptr);
-    //         }
-    //         x += emptySquares - 1; // -1 because of the x++ in the for loop
-            
-    //     } else if (c == '/') {
-    //         // new rank, do nothing
-    //         continue;
-    //     } 
-    //     else {
-    //         int playerNumber = std::isupper(static_cast<unsigned char>(c)) ? 0 : 1;
-    //         ChessPiece piece;
-    //         switch (std::tolower(static_cast<unsigned char>(c))) {
-    //             case 'p': piece = Pawn; break;
-    //             case 'n': piece = Knight; break;
-    //             case 'b': piece = Bishop; break;
-    //             case 'r': piece = Rook; break;
-    //             case 'q': piece = Queen; break;
-    //             case 'k': piece = King; break;
-    //             default: piece = Pawn; // should not happen
-    //         }
-    //         Bit* bit = PieceForPlayer(playerNumber, piece);
-    //         _grid->getSquare(x, y)->setBit(bit);
-    //     }
-    // }
     // NOT PART OF THIS ASSIGNMENT BUT OTHER THINGS THAT CAN BE IN A FEN STRING
     // ARE BELOW
     // 2: active color (W or B)
