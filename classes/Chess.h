@@ -51,22 +51,30 @@ private:
 
     Grid* _grid;
 
-    
+    //part I - Knight, King, Pawn
     BitboardElement _knightBitBoard[64];
-
     BitboardElement _kingBitBoard[64];
-
     BitboardElement _pawnBitBoard[64];
 
+    //part II - Rook, Bishop, Queen
+    BitboardElement _rookBitBoard[64];
+    BitboardElement _bishopBitBoard[64];
+    BitboardElement _queenBitBoard[64];
+
     void generateKnightMoves(std::vector<BitMove>& moves, BitboardElement knightBoard, uint64_t emptySquares);
-
     void generateKingMoves(std::vector<BitMove>& moves, BitboardElement kingBoard, uint64_t emptySquares);
-
     void generatePawnMoves(std::vector<BitMove>& moves, BitboardElement pawnBoard, uint64_t emptySquares, uint64_t enemyOccupied, bool isWhite);
+
+    //part II
+    void generateRookMoves(std::vector<BitMove>& moves, BitboardElement rookBoard, uint64_t emptySquares, uint64_t blackOccupied, uint64_t whiteOccupied);
+    void generateBishopMoves(std::vector<BitMove>& moves, BitboardElement bishopBoard, uint64_t emptySquares);
+    void generateQueenMoves(std::vector<BitMove>& moves, BitboardElement queenBoard, uint64_t emptySquares);
 
     void generateKingMovesBitboard(int square);
 
     void generatePawnMovesBitboard(int square); 
+
+ 
 
     void generateAllMoves();
     
@@ -74,11 +82,20 @@ private:
     void initializeKnightBitboards();
     void initializeKingBitboards();
     void initializePawnBitboards();
+    // new pieces - Rook, Bishop, Queen
+    void initializeRookBitboards();
+    void initializeBishopBitboards();
+    void initializeQueenBitboards();
+    
+    
     
     // Scan current board and create bitboards (called every turn)
     void getCurrentBoardState(BitboardElement& whiteKnights, BitboardElement& blackKnights,
                               BitboardElement& whiteKings, BitboardElement& blackKings,
                               BitboardElement& whitePawns, BitboardElement& blackPawns,
+                              BitboardElement& whiteRooks, BitboardElement& blackRooks,
+                              BitboardElement& whiteBishops, BitboardElement& blackBishops,
+                              BitboardElement& whiteQueens, BitboardElement& blackQueens,
                               uint64_t& emptySquares, uint64_t& whiteOccupied, uint64_t& blackOccupied);
     
     std::vector<BitMove> _moves; 

@@ -1,34 +1,35 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Site BuildName="Win32-MSBuild"
 	BuildStamp="20251118-0258-Experimental"
-	Name="Kyles_laptop"
-	Generator="ctest-3.20.21032501-MSVC_2"
-	CompilerName="C:/Program Files (x86)/Microsoft Visual Studio/2019/BuildTools/VC/Tools/MSVC/14.29.30133/bin/Hostx86/x64/cl.exe"
-	CompilerVersion="19.29.30159.0"
+	Name="Nemesis"
+	Generator="ctest-3.31.6-msvc6"
+	CompilerName="C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/VC/Tools/MSVC/14.44.35207/bin/Hostx86/x64/cl.exe"
+	CompilerVersion="19.44.35215.0"
 	OSName="Windows"
-	Hostname="Kyles_laptop"
-	OSRelease=" Professional"
+	Hostname="Nemesis"
+	OSRelease=" Personal"
 	OSVersion=" (Build 26100)"
-	OSPlatform="AMD64"
+	OSPlatform="x86"
 	Is64Bits="1"
-	VendorString="AuthenticAMD"
-	VendorID="Advanced Micro Devices"
-	FamilyID="15"
-	ModelID="4"
-	ProcessorCacheSize="64"
+	VendorString="GenuineIntel"
+	VendorID="Intel Corporation"
+	FamilyID="6"
+	ModelID="10"
+	ModelName=""
+	ProcessorCacheSize="-1"
 	NumberOfLogicalCPU="16"
-	NumberOfPhysicalCPU="8"
-	TotalVirtualMemory="44032"
-	TotalPhysicalMemory="15608"
-	LogicalProcessorsPerPhysical="2"
-	ProcessorClockFrequency="3193"
+	NumberOfPhysicalCPU="12"
+	TotalVirtualMemory="22764"
+	TotalPhysicalMemory="16108"
+	LogicalProcessorsPerPhysical="1"
+	ProcessorClockFrequency="2495"
 	>
 	<Testing>
-		<StartDateTime>Nov 17 19:21 Pacific Standard Time</StartDateTime>
-		<StartTestTime>1763436068</StartTestTime>
+		<StartDateTime>Nov 18 12:32 Pacific Standard Time</StartDateTime>
+		<StartTestTime>1763497947</StartTestTime>
 		<TestList/>
-		<EndDateTime>Nov 17 19:21 Pacific Standard Time</EndDateTime>
-		<EndTestTime>1763436068</EndTestTime>
+		<EndDateTime>Nov 18 12:32 Pacific Standard Time</EndDateTime>
+		<EndTestTime>1763497947</EndTestTime>
 		<ElapsedMinutes>0</ElapsedMinutes>
 	</Testing>
 </Site>
