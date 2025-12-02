@@ -67,8 +67,9 @@ private:
 
     //part II
     void generateRookMoves(std::vector<BitMove>& moves, BitboardElement rookBoard, uint64_t emptySquares, uint64_t blackOccupied, uint64_t whiteOccupied);
-    void generateBishopMoves(std::vector<BitMove>& moves, BitboardElement bishopBoard, uint64_t emptySquares);
-    void generateQueenMoves(std::vector<BitMove>& moves, BitboardElement queenBoard, uint64_t emptySquares);
+    void generateBishopMoves(std::vector<BitMove>& moves, BitboardElement bishopBoard, uint64_t emptySquares, uint64_t blackOccupied, uint64_t whiteOccupied);
+    void generateQueenMoves(std::vector<BitMove>& moves, BitboardElement queenBoard, uint64_t emptySquares, uint64_t blackOccupied, uint64_t whiteOccupied);
+
 
     void generateKingMovesBitboard(int square);
 

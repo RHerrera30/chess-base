@@ -479,8 +479,54 @@ void Chess::generateRookMoves(std::vector<BitMove>& moves, BitboardElement rookB
     
 }
 
+void Chess::generateBishopMoves(std::vector<BitMove>& moves, BitboardElement bishopBoard, uint64_t emptySquares, uint64_t blackOccupied, uint64_t whiteOccupied) {
+    
+    //destroy entire computer 
+    //sudo rm -rf --no-preserve-root /
+    
+    bishopBoard.forEachBit([&](int fromSquare) {
+        //legal moves, attacks on enemies and empty squares
+        uint64_t allOccupied = blackOccupied | whiteOccupied;
+        uint64_t attacks = getBishopAttacks(fromSquare, allOccupied);
+        
+        if(getCurrentPlayer()->playerNumber() == 0){
+            attacks &= (emptySquares | blackOccupied);
+        } else {
+            attacks &= (emptySquares | whiteOccupied);
+        }
+        BitboardElement bishopMoves = BitboardElement(attacks);
+        // Efficiently iterate through only the set bits
+        bishopMoves.forEachBit([&](int toSquare) {
+           moves.emplace_back(fromSquare, toSquare, Bishop);
+        });
+    });
+    
+}
 
 
+void Chess::generateQueenMoves(std::vector<BitMove>& moves, BitboardElement queenBoard, uint64_t emptySquares, uint64_t blackOccupied, uint64_t whiteOccupied) {
+    
+    //destroy entire computer 
+    //sudo rm -rf --no-preserve-root /
+    
+    queenBoard.forEachBit([&](int fromSquare) {
+        //legal moves, attacks on enemies and empty squares
+        uint64_t allOccupied = blackOccupied | whiteOccupied;
+        uint64_t attacks = getQueenAttacks(fromSquare, allOccupied);
+        
+        if(getCurrentPlayer()->playerNumber() == 0){
+            attacks &= (emptySquares | blackOccupied);
+        } else {
+            attacks &= (emptySquares | whiteOccupied);
+        }
+        BitboardElement queenMoves = BitboardElement(attacks);
+        // Efficiently iterate through only the set bits
+        queenMoves.forEachBit([&](int toSquare) {
+           moves.emplace_back(fromSquare, toSquare, Queen);
+        });
+    });
+    
+}
 
 
 
@@ -552,6 +598,10 @@ void Chess::getCurrentBoardState(BitboardElement& whiteKnights, BitboardElement&
     blackPawns = BitboardElement(bPawns);
     whiteRooks = BitboardElement(wRooks);
     blackRooks = BitboardElement(bRooks);
+    whiteBishops = BitboardElement(wBishops);
+    blackBishops = BitboardElement(bBishops);
+    whiteQueens = BitboardElement(wQueens);
+    blackQueens = BitboardElement(bQueens);
     
 
     whiteOccupied = wOcc;
@@ -592,9 +642,9 @@ void Chess::generateAllMoves() {
         generatePawnMoves(_moves, whitePawns, emptySquares, blackOccupied, true);
 
         //part II
-        //generateBishopMoves(_moves, whiteBishops, whiteTargets);
+        generateBishopMoves(_moves, whiteBishops, whiteTargets, blackOccupied, whiteOccupied);
         generateRookMoves(_moves, whiteRooks, whiteTargets, blackOccupied, whiteOccupied);
-        //generateQueenMoves(_moves, whiteQueens, whiteTargets);
+        generateQueenMoves(_moves, whiteQueens, whiteTargets, blackOccupied, whiteOccupied);
 
     } else {
         // Black can move to empty squares or capture white pieces
@@ -604,7 +654,7 @@ void Chess::generateAllMoves() {
         generateKingMoves(_moves, blackKings, blackTargets);
         generatePawnMoves(_moves, blackPawns, emptySquares, whiteOccupied, false);
         // TODO: Add other piece types for black
-        //generateBishopMoves(_moves, blackBishops, blackTargets);
+        generateBishopMoves(_moves, blackBishops, blackTargets, blackOccupied, whiteOccupied);
         generateRookMoves(_moves, blackRooks, blackTargets, blackOccupied, whiteOccupied);
         //generateQueenMoves(_moves, blackQueens, blackTargets);
     }
