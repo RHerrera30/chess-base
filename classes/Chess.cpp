@@ -68,7 +68,7 @@ void Chess::setUpBoard()
     // FENtoBoard("rnbqkbnr/8/8/8/8/8/8/RNBQKBNR");
 
     // Generate initial moves after setting up the board
-    generateAllMoves();
+    generateAllMoves(stateString(), getCurrentPlayer()->playerNumber());
     
     startGame();
 }
@@ -198,7 +198,7 @@ void Chess::bitMovedFromTo(Bit &bit, BitHolder &src, BitHolder &dst)
     Game::bitMovedFromTo(bit, src, dst);
     
     // After the turn ends and the player switches, regenerate moves for the new player
-    generateAllMoves();
+    generateAllMoves(stateString(), getCurrentPlayer()->playerNumber());
 }
 
 void Chess::stopGame()
@@ -610,7 +610,7 @@ void Chess::getCurrentBoardState(BitboardElement& whiteKnights, BitboardElement&
 }
 
 // Generate all legal moves for the current player - called every turn
-void Chess::generateAllMoves() {
+void Chess::generateAllMoves(const std::string& state, int playerColor) {
     _moves.clear();
     
     // Step 1: Scan the board and build bitboards from current piece positions
@@ -663,3 +663,25 @@ void Chess::generateAllMoves() {
               << getCurrentPlayer()->playerNumber() << std::endl;
 }
 
+
+
+
+
+int Chess::negamax(char* state, int depth, int alpha, int beta, int playerColor) 
+{
+    //_countSearch++;
+
+   
+
+    if(depth == 0) { 
+        //int score = evaluateBoard(state);
+        return evaluateBoard(state); 
+    }
+
+    auto newMoves = generateAllMoves(state, playerColor);
+
+    int bestVal = -9999999; // minimum value
+
+  
+    return bestVal;
+}
