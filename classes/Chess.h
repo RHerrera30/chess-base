@@ -105,4 +105,5 @@ private:
     bool gameHasAI(); 
     int negamax(std::string state, int depth,  int playerColor);
     int evaluateBoard(std::string state);
+    int _countSearch = 0; 
 };

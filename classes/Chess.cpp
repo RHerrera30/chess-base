@@ -749,7 +749,7 @@ void Chess::updateAI(){
 
 int Chess::negamax(std::string state, int depth, int playerColor) 
 {
-    //_countSearch++;
+    _countSearch++;
 
     if(depth == 0) { 
         //int score = evaluateBoard(state);
@@ -759,7 +759,7 @@ int Chess::negamax(std::string state, int depth, int playerColor)
 
     // Populate _moves for the given state (current player)
     generateAllMoves(state, getCurrentPlayer()->playerNumber());
-    int bestVal = -1000;
+    int bestVal = -10000;
 
     for (const auto &move : _moves){
         char boardSave = state[move.to];
