@@ -3,6 +3,7 @@
 #include <cmath>
 #include <cctype>
 #include <iostream>
+#include <algorithm>
 #include "MagicBitboards.h"
 
 Chess::Chess()
@@ -27,8 +28,8 @@ Chess::~Chess()
 
 char Chess::pieceNotation(int x, int y) const
 {
-    const char *wpieces = { "0PNBRQK" };
-    const char *bpieces = { "0pnbrqk" };
+    const char *wpieces = "0PNBRQK";
+    const char *bpieces = "0pnbrqk";
     Bit *bit = _grid->getSquare(x, y)->bit();
     char notation = '0';
     if (bit) {
@@ -44,13 +45,13 @@ Bit* Chess::PieceForPlayer(const int playerNumber, ChessPiece piece)
     Bit* bit = new Bit();
     // should possibly be cached from player class?
     const char* pieceName = pieces[piece - 1];
-    std::string spritePath = std::string("") + (playerNumber == 0 ? "b_" : "w_") + pieceName;
+    std::string spritePath = std::string("") + (playerNumber == 0 ? "w_" : "b_") + pieceName;
     bit->LoadTextureFromFile(spritePath.c_str());
     bit->setOwner(getPlayerAt(playerNumber));
     bit->setSize(pieceSize, pieceSize);
     
-    // Set gameTag: piece type for white (player 0), piece type + 128 for black (player 1)
-    bit->setGameTag(playerNumber == 0 ? piece + 128 : piece);
+    // Set gameTag: white uses base enum (<128), black adds 128
+    bit->setGameTag(playerNumber == 0 ? static_cast<int>(piece) : static_cast<int>(piece) + 128);
 
     return bit;
 }
@@ -69,6 +70,9 @@ void Chess::setUpBoard()
 
     // Generate initial moves after setting up the board
     generateAllMoves(stateString(), getCurrentPlayer()->playerNumber());
+
+    // Enable AI for black player (player 1)
+    setAIPlayer(1); // Black is AI
     
     startGame();
 }
@@ -77,17 +81,18 @@ void Chess::FENtoBoard(const std::string& fen) {
     // convert a FEN string to a board
     // FEN is a space delimited string with 6 fields
     // 1: piece placement (from white's perspective)
+    // FEN starts from rank 8 (top of board from white's view) down to rank 1
 
-    int rank = 0;
+    int rank = 7;  // Start at rank 7 (top of board, where black pieces start)
     int file = 0;
 
     std::cout << "FEN Length: " << fen.length() << std::endl; 
 
     for (char c : fen) {
         if (c == '/') {
-            rank++;
+            rank--;  // Move down the board
             file = 0;
-            if (rank >= 8 ) break;
+            if (rank < 0) break;
         }
         else if (c >= '1' && c <= '8') {
             int emptySquares = c - '0';
@@ -118,7 +123,7 @@ void Chess::FENtoBoard(const std::string& fen) {
             }
 
             
-            if(file < 8 && rank < 8) {
+            if(file < 8 && rank >= 0 && rank < 8) {
 
                 ChessSquare* square = _grid->getSquare(file, rank);
 
@@ -664,24 +669,114 @@ void Chess::generateAllMoves(const std::string& state, int playerColor) {
 }
 
 
+int Chess::evaluateBoard(std::string state){
+    int boardValues[128] = {0};  // Initialize all to 0
+    boardValues['P'] = 10;
+    boardValues['N'] = 40;
+    boardValues['B'] = 50;
+    boardValues['R'] = 100;
+    boardValues['Q'] = 200;
+    boardValues['K'] = 900;
+    boardValues['p'] = -10;
+    boardValues['n'] = -40;     
+    boardValues['b'] = -50;
+    boardValues['r'] = -100;
+    boardValues['q'] = -200;
+    boardValues['k'] = -900;
+    boardValues['0'] = 0;
+
+    int value = 0;
+    for (char c : state ){
+        value += boardValues[static_cast<unsigned char>(c)];
+    }
+    return value; 
+}
+
+bool Chess::gameHasAI() {
+    return _gameOptions.AIPlaying;
+}
+
+void Chess::updateAI(){
+    int bestValue = -10000;
+    BitMove bestMove;
+    std::string state = stateString();
+
+    // Ensure moves are current
+    generateAllMoves(state, getCurrentPlayer()->playerNumber());
+
+    std::cout << "AI thinking... Found " << _moves.size() << " possible moves." << std::endl;
+
+    if (_moves.empty()) {
+        std::cout << "No moves available for AI!" << std::endl;
+        return;
+    }
+
+    for (const auto &move : _moves){
+        char boardSave = state[move.to];
+        char pieceMoving = state[move.from];
+
+        state[move.to] = pieceMoving;
+        state[move.from] = '0';
+        int moveVal = -negamax(state, 3, HUMAN_PLAYER);
+
+        state[move.from] = pieceMoving;
+        state[move.to] = boardSave;
+
+        if (moveVal > bestValue){
+            bestMove = move;
+            bestValue = moveVal;
+        }
+    }
+
+    if (bestValue != -10000){
+        int srcSquare = bestMove.from;
+        int dstSquare = bestMove.to;
+        BitHolder& src = getHolderAt(srcSquare&7, srcSquare/8);
+        BitHolder& dst = getHolderAt(dstSquare&7, dstSquare/8);
+
+        Bit* bit = src.bit();
+        if (bit) {
+            std::cout << "AI moving piece from square " << srcSquare << " to " << dstSquare << std::endl;
+            dst.dropBitAtPoint(bit, ImVec2(0,0));
+            src.setBit(nullptr);
+            bitMovedFromTo(*bit, src, dst);
+        } else {
+            std::cout << "Error: No piece found at source square!" << std::endl;
+        }
+    }
+}
 
 
-
-int Chess::negamax(char* state, int depth, int alpha, int beta, int playerColor) 
+int Chess::negamax(std::string state, int depth, int playerColor) 
 {
     //_countSearch++;
 
-   
-
     if(depth == 0) { 
         //int score = evaluateBoard(state);
-        return evaluateBoard(state); 
+        return evaluateBoard(state) * playerColor; 
     }
 
-    auto newMoves = generateAllMoves(state, playerColor);
 
-    int bestVal = -9999999; // minimum value
+    // Populate _moves for the given state (current player)
+    generateAllMoves(state, getCurrentPlayer()->playerNumber());
+    int bestVal = -1000;
 
-  
+    for (const auto &move : _moves){
+        char boardSave = state[move.to];
+        char pieceMoving = state[move.from];
+
+        // Apply the move to the state
+        state[move.to] = pieceMoving;
+        state[move.from] = '0';
+
+        // Recursively evaluate
+        bestVal = std::max(bestVal, -negamax(state, depth - 1, -playerColor));
+
+        // Undo the move
+        state[move.from] = pieceMoving;
+        state[move.to] = boardSave;
+    
+    }
+
     return bestVal;
 }

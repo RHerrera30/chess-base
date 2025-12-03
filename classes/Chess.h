@@ -101,7 +101,8 @@ private:
     
     std::vector<BitMove> _moves; 
 
-
-    int negamax(char* state, int depth, int alpha, int beta, int playerColor);
-    int evaluateBoard(char* state);
+    void updateAI();
+    bool gameHasAI(); 
+    int negamax(std::string state, int depth,  int playerColor);
+    int evaluateBoard(std::string state);
 };
