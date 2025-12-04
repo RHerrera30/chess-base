@@ -717,7 +717,11 @@ void Chess::updateAI(){
 
         state[move.to] = pieceMoving;
         state[move.from] = '0';
-        int moveVal = -negamax(state, 3, HUMAN_PLAYER);
+        int moveVal = -negamax(state, 3, -100000, 100000, HUMAN_PLAYER);
+
+        std::cout << "negamax is called this many times: " <<_negaMaxCount << std::endl;
+
+        _negaMaxCount = 0; 
 
         state[move.from] = pieceMoving;
         state[move.to] = boardSave;
@@ -747,9 +751,10 @@ void Chess::updateAI(){
 }
 
 
-int Chess::negamax(std::string state, int depth, int playerColor) 
+int Chess::negamax(std::string state, int depth, int alpha, int beta, int playerColor) 
 {
-    _countSearch++;
+    
+    _negaMaxCount++;
 
     if(depth == 0) { 
         //int score = evaluateBoard(state);
@@ -770,9 +775,14 @@ int Chess::negamax(std::string state, int depth, int playerColor)
         state[move.from] = '0';
 
         // Recursively evaluate
-        bestVal = std::max(bestVal, -negamax(state, depth - 1, -playerColor));
+        bestVal = std::max(bestVal, -negamax(state, depth - 1, -beta, -alpha, -playerColor));
 
         // Undo the move
+        alpha = std::max(alpha, bestVal);
+
+        if (alpha >= beta)
+        { break;}
+         
         state[move.from] = pieceMoving;
         state[move.to] = boardSave;
     
