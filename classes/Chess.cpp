@@ -5,6 +5,7 @@
 #include <iostream>
 #include <algorithm>
 #include "MagicBitboards.h"
+#include "PieceSquare.h"
 
 Chess::Chess()
 {
@@ -72,7 +73,7 @@ void Chess::setUpBoard()
     generateAllMoves(stateString(), getCurrentPlayer()->playerNumber());
 
     // Enable AI for black player (player 1)
-    setAIPlayer(1); // Black is AI
+    setAIPlayer(0); // Black is AI
     
     startGame();
 }
@@ -661,7 +662,7 @@ void Chess::generateAllMoves(const std::string& state, int playerColor) {
         // TODO: Add other piece types for black
         generateBishopMoves(_moves, blackBishops, blackTargets, blackOccupied, whiteOccupied);
         generateRookMoves(_moves, blackRooks, blackTargets, blackOccupied, whiteOccupied);
-        //generateQueenMoves(_moves, blackQueens, blackTargets);
+        generateQueenMoves(_moves, blackQueens, blackTargets, blackOccupied, whiteOccupied);
     }
     
     std::cout << "Generated " << _moves.size() << " moves for player " 
@@ -676,21 +677,43 @@ int Chess::evaluateBoard(std::string state){
     boardValues['B'] = 50;
     boardValues['R'] = 100;
     boardValues['Q'] = 200;
-    boardValues['K'] = 900;
+    boardValues['K'] = 9000;
     boardValues['p'] = -10;
     boardValues['n'] = -40;     
     boardValues['b'] = -50;
     boardValues['r'] = -100;
     boardValues['q'] = -200;
-    boardValues['k'] = -900;
+    boardValues['k'] = -9000;
     boardValues['0'] = 0;
 
+    // Piece-square tables for positional bonuses (indexed by square 0-63)
+    const int* pieceSquareTables[128] = {nullptr};
+    pieceSquareTables['P'] = pawnTableW;
+    pieceSquareTables['p'] = pawnTableB;
+    pieceSquareTables['N'] = knightTableW;
+    pieceSquareTables['n'] = knightTableB;
+    pieceSquareTables['B'] = bishopTableW;
+    pieceSquareTables['b'] = bishopTableB;
+    pieceSquareTables['R'] = rookTableW;
+    pieceSquareTables['r'] = rookTableB;
+    pieceSquareTables['Q'] = queenTableW;
+    pieceSquareTables['q'] = queenTableB;
+    pieceSquareTables['K'] = kingTableW;
+    pieceSquareTables['k'] = kingTableB;
+    pieceSquareTables['0'] = emptyTable;
+
     int value = 0;
-    for (char c : state ){
+    for (int i = 0; i < 64; i++){
+        char c = state[i];
+        // Add material value + positional bonus in one line!
         value += boardValues[static_cast<unsigned char>(c)];
+        if (pieceSquareTables[static_cast<unsigned char>(c)]) {
+            value += pieceSquareTables[static_cast<unsigned char>(c)][i];
+        }
     }
     return value; 
 }
+
 
 bool Chess::gameHasAI() {
     return _gameOptions.AIPlaying;

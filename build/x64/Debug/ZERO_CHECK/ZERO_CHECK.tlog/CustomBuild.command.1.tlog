@@ -1,6 +1,6 @@
-^C:\GITREPOS\DRESS-UP\CHESS-BASE\BUILD\CMAKEFILES\212E5708725A38BCEFD3684C30F8D911\GENERATE.STAMP.RULE
+^C:\USERS\LYNNI\DESKTOP\CHESS-BASE\BUILD\CMAKEFILES\C1E0FB87313BAA7E7464AD98AB1AD4FC\GENERATE.STAMP.RULE
 setlocal
-"C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin\cmake.exe" -SC:/GITRepos/dress-up/chess-base -BC:/GITRepos/dress-up/chess-base/build --check-stamp-list CMakeFiles/generate.stamp.list --vs-solution-file C:/GITRepos/dress-up/chess-base/build/tictactoe.sln
+"C:\Program Files (x86)\Microsoft Visual Studio\2019\BuildTools\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin\cmake.exe" -SC:/Users/lynni/Desktop/chess-base -BC:/Users/lynni/Desktop/chess-base/build --check-stamp-list CMakeFiles/generate.stamp.list --vs-solution-file C:/Users/lynni/Desktop/chess-base/build/tictactoe.sln
 if %errorlevel% neq 0 goto :cmEnd
 :cmEnd
 endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
